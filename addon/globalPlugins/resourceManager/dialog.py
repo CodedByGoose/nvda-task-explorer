@@ -19,7 +19,7 @@ from logHandler import log
 
 import addonHandler
 
-from . import formatting, rowmodel, settings
+from . import formatting, rowmodel, settings, winprocinfo
 from .rowmodel import SORT_KEYS, buildRows
 
 addonHandler.initTranslation()
@@ -94,7 +94,7 @@ class ResourceManagerDialog(wx.Dialog):
         # dialog is being built is immediately cancelled by NVDA's own focus
         # announcement for the dialog and the list, and delaying it instead
         # would cut off whichever list item the user had already arrowed to.
-        # Overall totals are on control+T, spoken only when asked for.
+        # Overall totals are on alt+T, spoken only when asked for.
 
     # --- Construction ---------------------------------------------------------
 
@@ -373,12 +373,14 @@ class ResourceManagerDialog(wx.Dialog):
         if len(targets) > 1:
             # Translators: Confirmation before ending an application that has several processes.
             question = _(
-                "End {name}?\n\nThis will close {count} processes. Any unsaved work in that "
-                "application will be lost."
+                "End {name}?\n\nIts {count} processes will be asked to close. You may be "
+                "prompted to save your work."
             ).format(name=name, count=len(targets))
         else:
             # Translators: Confirmation before ending a single process.
-            question = _("End {name}?\n\nAny unsaved work in it will be lost.").format(name=name)
+            question = _(
+                "End {name}?\n\nIt will be asked to close, and may prompt you to save your work."
+            ).format(name=name)
 
         if (
             gui.messageBox(
@@ -395,30 +397,34 @@ class ResourceManagerDialog(wx.Dialog):
         self._terminate(targets, name)
 
     def _terminate(self, pids, name):
-        """Ask each process to close, then follow up on any that refuse."""
+        """Ask the application to close, then follow up if it does not.
+
+        The polite stage posts WM_CLOSE to the application's windows, which is
+        what clicking their close button does, so it can run its own shutdown
+        and prompt to save. psutil's terminate() is deliberately not used here:
+        on Windows it is an alias for kill() and destroys unsaved work outright.
+        """
         processes = []
-        denied = 0
         for pid in pids:
             try:
-                process = psutil.Process(pid)
-                process.terminate()
-                processes.append(process)
+                processes.append(psutil.Process(pid))
             except psutil.NoSuchProcess:
                 continue
-            except psutil.AccessDenied:
-                denied += 1
             except Exception:
-                log.debugWarning(f"Resource Manager: could not end process {pid}", exc_info=True)
-                denied += 1
+                log.debugWarning(f"Resource Manager: could not open process {pid}", exc_info=True)
 
-        if denied and not processes:
-            ui.message(
-                # Translators: Spoken when the user lacks permission to end an application.
-                _(
-                    "Could not end {name}. It is running with higher privileges than NVDA, "
-                    "so Windows will not let this add-on close it."
-                ).format(name=name)
-            )
+        if not processes:
+            # Translators: Spoken when the chosen application had already closed.
+            ui.message(_("{name} is no longer running").format(name=name))
+            self._refresh(force=True)
+            return
+
+        asked = winprocinfo.askWindowsToClose([p.pid for p in processes])
+        if not asked:
+            # Nothing to ask: a background service or a hung window that no
+            # longer accepts messages. Forcing is the only remaining option, so
+            # say so rather than pretending we tried something gentler.
+            self._offerForceKill(processes, name, politeAttemptFailed=True)
             return
 
         # Translators: Spoken immediately after asking an application to close.
@@ -451,17 +457,27 @@ class ResourceManagerDialog(wx.Dialog):
         ui.message(_("{name} has closed").format(name=name))
         self._refresh(force=True)
 
-    def _offerForceKill(self, processes, name):
+    def _offerForceKill(self, processes, name, politeAttemptFailed=False):
         if not self:
             return
+        if politeAttemptFailed:
+            # Translators: Offered when an application has no window that could be asked to close.
+            question = _(
+                "{name} has no window that can be asked to close, so it cannot be closed "
+                "politely. This is usual for background services.\n\n"
+                "Force it to close? This is immediate and any unsaved work will be lost."
+            ).format(name=name)
+        else:
+            # Translators: Offered when an application ignored a polite request to close.
+            question = _(
+                "{name} has not closed. {count} of its processes are still running.\n\n"
+                "Force them to close? This is immediate and unsaved work will definitely "
+                "be lost."
+            ).format(name=name, count=len(processes))
+
         if (
             gui.messageBox(
-                # Translators: Offered when an application ignored a polite request to close.
-                _(
-                    "{name} has not closed. {count} of its processes are still running.\n\n"
-                    "Force them to close? This is immediate and unsaved work will definitely "
-                    "be lost."
-                ).format(name=name, count=len(processes)),
+                question,
                 # Translators: The title of the dialog offering to force an application to close.
                 _("Force {name} to close?").format(name=name),
                 wx.YES | wx.NO | wx.NO_DEFAULT | wx.ICON_WARNING,
@@ -470,15 +486,28 @@ class ResourceManagerDialog(wx.Dialog):
             != wx.YES
         ):
             return
-        failed = 0
+
+        denied = failed = 0
         for process in processes:
             try:
                 process.kill()
             except psutil.NoSuchProcess:
                 continue
+            except psutil.AccessDenied:
+                denied += 1
             except Exception:
+                log.debugWarning(f"Resource Manager: could not kill process {process.pid}", exc_info=True)
                 failed += 1
-        if failed:
+
+        if denied:
+            ui.message(
+                # Translators: Spoken when the user lacks permission to end an application.
+                _(
+                    "Could not close {name}. It is running with higher privileges than NVDA, "
+                    "so Windows will not let this add-on close it."
+                ).format(name=name)
+            )
+        elif failed:
             # Translators: Spoken when forcing an application to close did not work.
             ui.message(_("Could not force {name} to close").format(name=name))
         else:

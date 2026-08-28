@@ -56,9 +56,16 @@ kept in a stable order, so rows do not swap places under you for no reason.
 Select an application and press the End task button.
 
 You will be asked to confirm, and the confirmation tells you how many processes
-will close. Resource Manager first asks the application to close politely. If it
-is still running a few seconds later, you are asked whether to force it, which
-is immediate and loses unsaved work.
+will close.
+
+Resource Manager first asks the application to close, in exactly the way
+clicking its close button would. The application runs its own shutdown and may
+prompt you to save your work. If it is still running a few seconds later, you
+are asked whether to force it, which is immediate and does lose unsaved work.
+
+An application with no window, such as a background service, cannot be asked
+politely at all. Resource Manager tells you so and offers to force it, rather
+than pretending it tried something gentler.
 
 Some things cannot be ended:
 

@@ -173,6 +173,57 @@ def getSystemProcessInfo():
     return processes
 
 
+#: Posted to a window to ask its application to close, exactly as clicking the
+#: window's close button would.
+WM_CLOSE = 0x0010
+
+_EnumWindowsProc = ctypes.WINFUNCTYPE(wintypes.BOOL, wintypes.HWND, wintypes.LPARAM)
+
+
+def askWindowsToClose(pids):
+    """Ask the given processes to close by posting WM_CLOSE to their windows.
+
+    This is what genuinely polite closing means on Windows. psutil's
+    Process.terminate() is not it: on Windows that is an alias for kill(), which
+    calls TerminateProcess and gives the application no chance to save anything.
+
+    Posting WM_CLOSE is what clicking a window's close button does, so the
+    application runs its own shutdown path and may prompt to save work.
+
+    Returns the number of windows asked, which is zero for a process with no
+    visible window, such as a background service.
+    """
+    wanted = set(pids)
+    if not wanted:
+        return 0
+    asked = 0
+
+    try:
+        user32 = ctypes.WinDLL("user32.dll")
+
+        def callback(hwnd, _lParam):
+            nonlocal asked
+            try:
+                if not user32.IsWindowVisible(hwnd):
+                    return True
+                pid = wintypes.DWORD()
+                user32.GetWindowThreadProcessId(hwnd, ctypes.byref(pid))
+                if pid.value in wanted:
+                    # Posting rather than sending: a hung application must not
+                    # block us, and this call has to return promptly.
+                    if user32.PostMessageW(hwnd, WM_CLOSE, 0, 0):
+                        asked += 1
+            except Exception:
+                pass
+            return True
+
+        # EnumWindows visits top level windows only, which is what we want.
+        user32.EnumWindows(_EnumWindowsProc(callback), 0)
+    except Exception:
+        return asked
+    return asked
+
+
 def verify():
     """Check the fast enumeration agrees with psutil before we rely on it.
 
