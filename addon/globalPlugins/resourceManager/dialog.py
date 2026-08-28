@@ -31,6 +31,17 @@ FREEZE_SECONDS = 2.0
 #: How long to give a process to close politely before offering to force it.
 GRACEFUL_TIMEOUT_SECONDS = 4.0
 
+#: alt plus a number picks a sort order, indexing into rowmodel.SORT_KEYS.
+#: The number row and the numeric keypad both work.
+SORT_SHORTCUT_KEYS = {
+    ord("1"): 0,
+    ord("2"): 1,
+    ord("3"): 2,
+    wx.WXK_NUMPAD1: 0,
+    wx.WXK_NUMPAD2: 1,
+    wx.WXK_NUMPAD3: 2,
+}
+
 
 class ResourceManagerDialog(wx.Dialog):
     """Shows running applications ordered by how much they are using."""
@@ -91,7 +102,8 @@ class ResourceManagerDialog(wx.Dialog):
         mainSizer = wx.BoxSizer(wx.VERTICAL)
         contentSizer = gui.guiHelper.BoxSizerHelper(self, orientation=wx.VERTICAL)
 
-        sortChoices = [
+        # Order must match rowmodel.SORT_KEYS, and the alt+number shortcuts.
+        self.sortChoices = [
             # Translators: A sort order for the application list.
             _("Processor use"),
             # Translators: A sort order for the application list.
@@ -100,7 +112,7 @@ class ResourceManagerDialog(wx.Dialog):
             _("Name"),
         ]
         # Translators: The label of the combo box choosing how the list is ordered.
-        self.sortCombo = contentSizer.addLabeledControl(_("&Sort by:"), wx.Choice, choices=sortChoices)
+        self.sortCombo = contentSizer.addLabeledControl(_("&Sort by:"), wx.Choice, choices=self.sortChoices)
         self.sortCombo.SetSelection(0)
         self.sortCombo.Bind(wx.EVT_CHOICE, self._onSortChanged)
 
@@ -210,10 +222,22 @@ class ResourceManagerDialog(wx.Dialog):
         evt.Skip()
 
     def _onSortChanged(self, evt):
-        self._sortKey = SORT_KEYS[self.sortCombo.GetSelection()]
+        # NVDA already announces the combo box's new value, so saying it again
+        # here would only repeat what the user just heard.
+        self._applySort(self.sortCombo.GetSelection(), announce=False)
+
+    def _applySort(self, index, announce=True):
+        """Reorder the list, keeping the combo box and shortcuts in step."""
+        if not 0 <= index < len(SORT_KEYS):
+            return
+        self.sortCombo.SetSelection(index)
+        self._sortKey = SORT_KEYS[index]
         self._refresh(force=True)
         if self._rows:
             self.list.SetSelection(0)
+        if announce:
+            # Translators: Spoken when the list order is changed by a shortcut.
+            ui.message(_("Sorted by {order}").format(order=self.sortChoices[index]))
 
     def _onCharHook(self, evt):
         key = evt.GetKeyCode()
@@ -231,11 +255,16 @@ class ResourceManagerDialog(wx.Dialog):
         if key == wx.WXK_F5:
             self._onRefreshButton(evt)
             return
-        if key == ord("T") and evt.ControlDown():
-            # Spoken only on request. Announcing totals as the dialog opens does
-            # not work: NVDA's focus announcement cancels it every time.
-            ui.message(formatting.formatTotals(self._sampler.getSnapshot()))
-            return
+        if evt.AltDown():
+            if key == ord("T"):
+                # Spoken only on request. Announcing totals as the dialog opens
+                # does not work: NVDA's focus announcement cancels it every time.
+                ui.message(formatting.formatTotals(self._sampler.getSnapshot()))
+                return
+            sortIndex = SORT_SHORTCUT_KEYS.get(key)
+            if sortIndex is not None:
+                self._applySort(sortIndex)
+                return
         if key == wx.WXK_ESCAPE:
             # The dialog has no Cancel button, so wx would not close it for us.
             self.Close()

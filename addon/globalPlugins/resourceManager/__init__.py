@@ -109,3 +109,15 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
     def script_announceTopByMemory(self, gesture):
         self._syncSamplerInterval()
         self._announceTop(byMemory=True)
+
+    @script(
+        # Translators: The description of a command, shown in NVDA's Input Gestures dialog.
+        description=_("Announces total processor and memory use"),
+        speakOnDemand=True,
+    )
+    def script_announceTotalUtilisation(self, gesture):
+        self._syncSamplerInterval()
+        if not self.sampler.isPrimed:
+            ui.message(formatting.formatNotReadyMessage())
+            return
+        ui.message(formatting.formatTotals(self.sampler.getSnapshot()))

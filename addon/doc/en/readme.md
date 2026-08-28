@@ -15,7 +15,7 @@ Press `NVDA+alt+R`.
 The dialog opens with the busiest application selected, so you are on the
 application you most likely came to find as soon as it appears.
 
-Overall processor and memory use are on `control+T`, spoken only when you ask.
+Overall processor and memory use are on `alt+T`, spoken only when you ask.
 They are deliberately not announced as the dialog opens: NVDA announces the
 dialog and the selected item at that moment, and anything the add-on said would
 simply be cut off.
@@ -39,13 +39,16 @@ reads as 12 percent, not 100 percent.
   individual processes takes you back up to the application it belongs to.
 - Tab reaches the sort combo box and the buttons.
 - `F5` updates the list immediately.
-- `control+T` announces overall processor and memory use.
+- `alt+T` announces overall processor and memory use.
+- `alt+1`, `alt+2` and `alt+3` sort by processor use, memory use and name.
 - Escape closes the dialog.
 
 ## Sorting
 
 The sort combo box above the list offers processor use, memory use, and name.
-Processor use is the default. Applications that are using the same amount are
+Processor use is the default. You can also switch without leaving the list:
+`alt+1` sorts by processor use, `alt+2` by memory use and `alt+3` by name, and
+the new order is announced as it is applied. Applications that are using the same amount are
 kept in a stable order, so rows do not swap places under you for no reason.
 
 ## Ending a task
@@ -69,13 +72,14 @@ Some things cannot be ended:
 
 ## Announcing the busiest applications without opening anything
 
-Two commands announce the top few applications without any window appearing.
+Three commands report usage without any window appearing.
 Neither has a shortcut assigned out of the box, so they do not collide with
 anything you already use. Assign them under Resource Manager in NVDA's Input
 Gestures dialog:
 
 - Announce the applications using the most processor time.
 - Announce the applications using the most memory.
+- Announce total processor and memory use for the whole machine.
 
 How many applications they mention, and whether they mention memory as well as
 processor use, are both settings.
