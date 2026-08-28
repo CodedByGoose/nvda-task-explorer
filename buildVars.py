@@ -27,7 +27,13 @@ directly from the list. Spoken shortcuts announce the busiest applications
 without opening any window."""
     ),
     "addon_version": "1.0",
-    "addon_author": "CodedByGoose",
+    # Translators: The changelog shown on the add-on's information page.
+    "addon_changelog": _(
+        """Version 1.0
+
+First release."""
+    ),
+    "addon_author": "CodedByGoose <codedbygoose@gmail.com>",
     "addon_url": "https://github.com/CodedByGoose/nvda-resource-manager",
     "addon_sourceURL": "https://github.com/CodedByGoose/nvda-resource-manager",
     "addon_docFileName": "readme.html",

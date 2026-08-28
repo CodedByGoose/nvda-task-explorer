@@ -47,6 +47,7 @@ def generateManifest():
         f"name = {ADDON_NAME}",
         f'summary = "{INFO["addon_summary"]}"',
         f'description = """{INFO["addon_description"]}"""',
+        f'changelog = """{INFO["addon_changelog"]}"""',
         f'author = "{INFO["addon_author"]}"',
         f"url = {INFO['addon_url']}",
         f"version = {VERSION}",
