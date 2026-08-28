@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-"""Tests for the Resource Manager sampler.
+"""Tests for the Task Explorer sampler.
 
 The sampler imports nothing from NVDA, so these run under an ordinary Python
 interpreter that has psutil installed:
@@ -15,7 +15,7 @@ import unittest
 
 sys.path.insert(
     0,
-    os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "addon", "globalPlugins", "resourceManager"),
+    os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "addon", "globalPlugins", "taskExplorer"),
 )
 
 import sampler  # noqa: E402

@@ -15,7 +15,7 @@ import unittest
 
 sys.path.insert(
     0,
-    os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "addon", "globalPlugins", "resourceManager"),
+    os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "addon", "globalPlugins", "taskExplorer"),
 )
 
 import formatting  # noqa: E402

@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-"""The Resource Manager dialog.
+"""The Task Explorer dialog.
 
 A single column list box was chosen over a multi column list control on purpose.
 Each row is composed into one sentence, so a single arrow key press tells you
@@ -68,8 +68,8 @@ class ResourceManagerDialog(wx.Dialog):
         return dialog
 
     def __init__(self, parent, sampler):
-        # Translators: The title of the Resource Manager dialog.
-        super().__init__(parent, title=_("Resource Manager"))
+        # Translators: The title of the Task Explorer dialog.
+        super().__init__(parent, title=_("Task Explorer"))
         ResourceManagerDialog._instance = self
         self._sampler = sampler
         self._expandedKeys = set()
@@ -340,7 +340,7 @@ class ResourceManagerDialog(wx.Dialog):
             gui.messageBox(
                 # Translators: Shown when the user tries to end NVDA itself.
                 _(
-                    "Resource Manager will not end NVDA, because doing so would leave you "
+                    "Task Explorer will not end NVDA, because doing so would leave you "
                     "with no speech and no way to get it back. Exit NVDA from its own menu "
                     "if that is what you want."
                 ),
@@ -411,7 +411,7 @@ class ResourceManagerDialog(wx.Dialog):
             except psutil.NoSuchProcess:
                 continue
             except Exception:
-                log.debugWarning(f"Resource Manager: could not open process {pid}", exc_info=True)
+                log.debugWarning(f"Task Explorer: could not open process {pid}", exc_info=True)
 
         if not processes:
             # Translators: Spoken when the chosen application had already closed.
@@ -435,7 +435,7 @@ class ResourceManagerDialog(wx.Dialog):
         threading.Thread(
             target=self._awaitTermination,
             args=(processes, name),
-            name="resourceManagerTerminate",
+            name="taskExplorerTerminate",
             daemon=True,
         ).start()
 
@@ -443,7 +443,7 @@ class ResourceManagerDialog(wx.Dialog):
         try:
             _gone, alive = psutil.wait_procs(processes, timeout=GRACEFUL_TIMEOUT_SECONDS)
         except Exception:
-            log.debugWarning("Resource Manager: waiting for termination failed", exc_info=True)
+            log.debugWarning("Task Explorer: waiting for termination failed", exc_info=True)
             return
         if alive:
             wx.CallAfter(self._offerForceKill, alive, name)
@@ -496,7 +496,7 @@ class ResourceManagerDialog(wx.Dialog):
             except psutil.AccessDenied:
                 denied += 1
             except Exception:
-                log.debugWarning(f"Resource Manager: could not kill process {process.pid}", exc_info=True)
+                log.debugWarning(f"Task Explorer: could not kill process {process.pid}", exc_info=True)
                 failed += 1
 
         if denied:

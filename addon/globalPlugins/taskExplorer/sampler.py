@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-"""Process sampling for the Resource Manager NVDA add-on.
+"""Process sampling for the Task Explorer NVDA add-on.
 
 This module deliberately imports nothing from NVDA, so it can be exercised by
 the test suite with an ordinary Python interpreter.
@@ -435,7 +435,7 @@ class Sampler:
         if not ok and self.onError:
             try:
                 self.onError(
-                    "Resource Manager: fast process enumeration failed its self check "
+                    "Task Explorer: fast process enumeration failed its self check "
                     f"({reason}). Falling back to the slower psutil path."
                 )
             except Exception:
@@ -461,7 +461,7 @@ class Sampler:
         self._stopEvent.clear()
         self._thread = threading.Thread(
             target=self._run,
-            name="resourceManagerSampler",
+            name="taskExplorerSampler",
             daemon=True,
         )
         self._thread.start()
@@ -519,7 +519,7 @@ class Sampler:
                 # A failed pass must not kill the thread; the next one may work.
                 if self.onError:
                     try:
-                        self.onError("Resource Manager sampling pass failed:\n" + traceback.format_exc())
+                        self.onError("Task Explorer sampling pass failed:\n" + traceback.format_exc())
                     except Exception:
                         pass
                 try:

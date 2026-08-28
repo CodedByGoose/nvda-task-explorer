@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Build customizations for the Resource Manager NVDA add-on.
+# Build customizations for the Task Explorer NVDA add-on.
 # Written by CodedByGoose, with the help of Quill (Claude agent).
 
 
@@ -11,10 +11,10 @@ def _(arg):
 # Add-on information. Used to generate addon/manifest.ini at build time.
 addon_info = {
     # Internal add-on name. Must be unique and is used as the add-on's folder name.
-    "addon_name": "resourceManager",
+    "addon_name": "taskExplorer",
     # Add-on summary, usually the user visible name of the add-on.
     # Translators: Summary for this add-on to be shown on installation and add-on information.
-    "addon_summary": _("Resource Manager"),
+    "addon_summary": _("Task Explorer"),
     # Add-on description.
     # Translators: Long description to be shown for this add-on on add-on information from add-ons manager.
     "addon_description": _(
@@ -34,8 +34,8 @@ without opening any window."""
 First release."""
     ),
     "addon_author": "CodedByGoose <codedbygoose@gmail.com>",
-    "addon_url": "https://github.com/CodedByGoose/nvda-resource-manager",
-    "addon_sourceURL": "https://github.com/CodedByGoose/nvda-resource-manager",
+    "addon_url": "https://github.com/CodedByGoose/nvda-task-explorer",
+    "addon_sourceURL": "https://github.com/CodedByGoose/nvda-task-explorer",
     "addon_docFileName": "readme.html",
     # Minimum NVDA version supported.
     "addon_minimumNVDAVersion": "2025.1",
@@ -48,7 +48,7 @@ First release."""
 }
 
 # Define the python files that are the sources of your add-on.
-pythonSources = ["addon/globalPlugins/resourceManager/*.py"]
+pythonSources = ["addon/globalPlugins/taskExplorer/*.py"]
 
 # Files that contain strings for translation.
 i18nSources = pythonSources + ["buildVars.py"]

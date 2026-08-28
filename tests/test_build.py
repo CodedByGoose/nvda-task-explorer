@@ -91,7 +91,7 @@ class TestPackageContents(unittest.TestCase):
         with zipfile.ZipFile(self.path) as archive:
             names = archive.namelist()
         for module in ("__init__", "dialog", "sampler", "settings", "formatting", "rowmodel", "winprocinfo"):
-            self.assertIn(f"globalPlugins/resourceManager/{module}.py", names)
+            self.assertIn(f"globalPlugins/taskExplorer/{module}.py", names)
 
     def test_documentationIsRenderedToHtml(self):
         with zipfile.ZipFile(self.path) as archive:

@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-"""Resource Manager, an NVDA add-on.
+"""Task Explorer, an NVDA add-on.
 
 Shows which applications are using the most CPU, in a dialog built to be
 explored by ear rather than by eye.
@@ -23,7 +23,7 @@ addonHandler.initTranslation()
 
 class GlobalPlugin(globalPluginHandler.GlobalPlugin):
     # Translators: The category these commands appear under in NVDA's Input Gestures dialog.
-    scriptCategory = _("Resource Manager")
+    scriptCategory = _("Task Explorer")
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -45,11 +45,11 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
             if existing is not None:
                 wx.CallAfter(existing.Close)
         except Exception:
-            log.debugWarning("Resource Manager: could not close the dialog", exc_info=True)
+            log.debugWarning("Task Explorer: could not close the dialog", exc_info=True)
         try:
             self.sampler.stop()
         except Exception:
-            log.debugWarning("Resource Manager: could not stop the sampler", exc_info=True)
+            log.debugWarning("Task Explorer: could not stop the sampler", exc_info=True)
         try:
             gui.settingsDialogs.NVDASettingsDialog.categoryClasses.remove(settings.ResourceManagerSettingsPanel)
         except ValueError:
@@ -77,7 +77,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 
     @script(
         # Translators: The description of a command, shown in NVDA's Input Gestures dialog.
-        description=_("Shows the Resource Manager, listing applications by how much they are using"),
+        description=_("Shows the Task Explorer, listing applications by how much they are using"),
         gesture="kb:NVDA+alt+r",
     )
     def script_showResourceManager(self, gesture):
@@ -88,9 +88,9 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
         try:
             dialog.ResourceManagerDialog.open(self.sampler)
         except Exception:
-            log.error("Resource Manager: the dialog could not be shown", exc_info=True)
+            log.error("Task Explorer: the dialog could not be shown", exc_info=True)
             # Translators: Spoken when the dialog fails to open.
-            ui.message(_("Resource Manager could not open. See the NVDA log for details."))
+            ui.message(_("Task Explorer could not open. See the NVDA log for details."))
 
     @script(
         # Translators: The description of a command, shown in NVDA's Input Gestures dialog.

@@ -4,7 +4,7 @@
 
 First release.
 
-Resource Manager shows which applications are using the most processor time, in
+Task Explorer shows which applications are using the most processor time, in
 a dialog built to be explored by ear.
 
 - A dialog on `NVDA+alt+R` listing running applications ordered by processor

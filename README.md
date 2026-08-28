@@ -1,4 +1,4 @@
-# Resource Manager for NVDA
+# Task Explorer for NVDA
 
 An NVDA add-on that shows which applications are using the most CPU, in a fast,
 fully keyboard-driven dialog you can actually navigate with a screen reader.
@@ -32,9 +32,9 @@ read process activity, has shipped inside NVDA since version 2024.2.
 
 ## Keyboard commands
 
-- `NVDA+alt+R` opens the Resource Manager dialog.
+- `NVDA+alt+R` opens the Task Explorer dialog.
 - Announcing the top applications by CPU, and by memory, are available as
-  unassigned commands. Bind them to whatever you like under Resource Manager in
+  unassigned commands. Bind them to whatever you like under Task Explorer in
   NVDA's Input Gestures dialog.
 
 Inside the dialog: arrow keys move through the list, right arrow or enter
@@ -43,7 +43,7 @@ again, tab reaches the sort combo box and the buttons, and escape closes.
 
 ## Building from source
 
-Run `python build.py`. This produces `resourceManager-<version>.nvda-addon` in
+Run `python build.py`. This produces `taskExplorer-<version>.nvda-addon` in
 the repository root, which you can open to install. No build toolchain beyond a
 Python 3 interpreter is required.
 

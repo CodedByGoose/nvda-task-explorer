@@ -1,7 +1,7 @@
 # -*- coding: UTF-8 -*-
-"""Build script for the Resource Manager NVDA add-on.
+"""Build script for the Task Explorer NVDA add-on.
 
-Produces resourceManager-<version>.nvda-addon in the repository root. Requires
+Produces taskExplorer-<version>.nvda-addon in the repository root. Requires
 nothing beyond a Python 3 interpreter: no SCons, no gettext, no markdown.
 
 Usage:
@@ -276,7 +276,7 @@ def clean():
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Build the Resource Manager NVDA add-on.")
+    parser = argparse.ArgumentParser(description="Build the Task Explorer NVDA add-on.")
     parser.add_argument(
         "--dev-install",
         action="store_true",

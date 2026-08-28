@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-"""Configuration and the NVDA settings panel for Resource Manager.
+"""Configuration and the NVDA settings panel for Task Explorer.
 
 The panel is registered into NVDA's own Settings dialog, so it appears in the
 category list alongside every other add-on rather than behind a separate menu
@@ -17,7 +17,7 @@ import addonHandler
 
 addonHandler.initTranslation()
 
-CONFIG_SECTION = "resourceManager"
+CONFIG_SECTION = "taskExplorer"
 
 #: Rebuild the list on every timer tick, whatever the user is doing.
 REFRESH_ALWAYS = "always"
@@ -49,8 +49,8 @@ def getSetting(key):
 
 
 class ResourceManagerSettingsPanel(gui.settingsDialogs.SettingsPanel):
-    # Translators: The label for the Resource Manager category in NVDA's settings dialog.
-    title = _("Resource Manager")
+    # Translators: The label for the Task Explorer category in NVDA's settings dialog.
+    title = _("Task Explorer")
 
     def makeSettings(self, settingsSizer):
         helper = guiHelper.BoxSizerHelper(self, sizer=settingsSizer)

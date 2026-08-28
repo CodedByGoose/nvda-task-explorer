@@ -1,6 +1,6 @@
-# Resource Manager
+# Task Explorer
 
-Resource Manager shows you which applications are using the most processor
+Task Explorer shows you which applications are using the most processor
 time, in a small dialog built to be explored with a screen reader.
 
 Windows Task Manager presents its process list as a very large data grid whose
@@ -58,13 +58,13 @@ Select an application and press the End task button.
 You will be asked to confirm, and the confirmation tells you how many processes
 will close.
 
-Resource Manager first asks the application to close, in exactly the way
+Task Explorer first asks the application to close, in exactly the way
 clicking its close button would. The application runs its own shutdown and may
 prompt you to save your work. If it is still running a few seconds later, you
 are asked whether to force it, which is immediate and does lose unsaved work.
 
 An application with no window, such as a background service, cannot be asked
-politely at all. Resource Manager tells you so and offers to force it, rather
+politely at all. Task Explorer tells you so and offers to force it, rather
 than pretending it tried something gentler.
 
 Some things cannot be ended:
@@ -81,7 +81,7 @@ Some things cannot be ended:
 
 Three commands report usage without any window appearing.
 Neither has a shortcut assigned out of the box, so they do not collide with
-anything you already use. Assign them under Resource Manager in NVDA's Input
+anything you already use. Assign them under Task Explorer in NVDA's Input
 Gestures dialog:
 
 - Announce the applications using the most processor time.
@@ -93,7 +93,7 @@ processor use, are both settings.
 
 ## Settings
 
-Resource Manager appears in NVDA's own Settings dialog, in the category list
+Task Explorer appears in NVDA's own Settings dialog, in the category list
 alongside your other add-ons. You can set:
 
 - Whether the list updates continuously, or pauses while you are moving through
