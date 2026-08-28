@@ -1,5 +1,17 @@
 # Changelog
 
+## Version 1.0.1
+
+Tested with NVDA 2026.2, and `lastTestedNVDAVersion` raised to match.
+
+NVDA 2026.1 reset the add-on compatibility baseline, so an add-on last tested
+against 2025.3 is refused by every 2026 release. Because NVDA checks the minimum
+version against the running release and the last tested version against that
+release's compatibility floor, one build satisfies both: NVDA 2025.1 through
+2026.2 are all covered by this single package.
+
+No functional changes.
+
 ## Version 1.0
 
 First release.

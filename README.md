@@ -27,7 +27,7 @@ instantly.
 
 ## Requirements
 
-NVDA 2025.1 or later. No other dependencies. psutil, which this add-on uses to
+NVDA 2025.1 or later, tested through NVDA 2026.2. No other dependencies. psutil, which this add-on uses to
 read process activity, has shipped inside NVDA since version 2024.2.
 
 ## Keyboard commands

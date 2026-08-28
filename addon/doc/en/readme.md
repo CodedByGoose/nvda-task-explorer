@@ -110,7 +110,8 @@ position in the list you were at.
 
 ## Requirements
 
-NVDA 2025.1 or later. Nothing else needs installing.
+NVDA 2025.1 or later, tested through NVDA 2026.2. Nothing else needs
+installing.
 
 ## Credits
 
