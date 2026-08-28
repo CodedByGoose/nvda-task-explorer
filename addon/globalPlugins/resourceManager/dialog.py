@@ -79,8 +79,11 @@ class ResourceManagerDialog(wx.Dialog):
         self.list.SetFocus()
         if self.list.GetCount():
             self.list.SetSelection(0)
-        if settings.getSetting("announceTotalsOnOpen"):
-            ui.message(formatting.formatTotals(self._sampler.getSnapshot()))
+        # Nothing is announced here on purpose. Any message spoken while the
+        # dialog is being built is immediately cancelled by NVDA's own focus
+        # announcement for the dialog and the list, and delaying it instead
+        # would cut off whichever list item the user had already arrowed to.
+        # Overall totals are on control+T, spoken only when asked for.
 
     # --- Construction ---------------------------------------------------------
 
@@ -227,6 +230,11 @@ class ResourceManagerDialog(wx.Dialog):
                 return
         if key == wx.WXK_F5:
             self._onRefreshButton(evt)
+            return
+        if key == ord("T") and evt.ControlDown():
+            # Spoken only on request. Announcing totals as the dialog opens does
+            # not work: NVDA's focus announcement cancels it every time.
+            ui.message(formatting.formatTotals(self._sampler.getSnapshot()))
             return
         if key == wx.WXK_ESCAPE:
             # The dialog has no Cancel button, so wx would not close it for us.

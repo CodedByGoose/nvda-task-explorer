@@ -36,7 +36,6 @@ confspec = {
     "refreshInterval": f"integer(default=2, min={MIN_INTERVAL}, max={MAX_INTERVAL})",
     "topAppCount": f"integer(default=3, min={MIN_TOP_COUNT}, max={MAX_TOP_COUNT})",
     "includeMemoryInSpokenSummary": "boolean(default=true)",
-    "announceTotalsOnOpen": "boolean(default=true)",
 }
 
 
@@ -95,15 +94,8 @@ class ResourceManagerSettingsPanel(gui.settingsDialogs.SettingsPanel):
         )
         self.includeMemoryCheckBox.SetValue(getSetting("includeMemoryInSpokenSummary"))
 
-        # Translators: The label for a checkbox controlling whether totals are announced when the dialog opens.
-        self.announceTotalsCheckBox = helper.addItem(
-            wx.CheckBox(self, label=_("Announce &total CPU and memory use when the dialog opens"))
-        )
-        self.announceTotalsCheckBox.SetValue(getSetting("announceTotalsOnOpen"))
-
     def onSave(self):
         config.conf[CONFIG_SECTION]["refreshMode"] = REFRESH_MODES[self.refreshModeCombo.GetSelection()]
         config.conf[CONFIG_SECTION]["refreshInterval"] = self.intervalEdit.GetValue()
         config.conf[CONFIG_SECTION]["topAppCount"] = self.topCountEdit.GetValue()
         config.conf[CONFIG_SECTION]["includeMemoryInSpokenSummary"] = self.includeMemoryCheckBox.GetValue()
-        config.conf[CONFIG_SECTION]["announceTotalsOnOpen"] = self.announceTotalsCheckBox.GetValue()

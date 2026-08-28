@@ -12,9 +12,13 @@ puts the result in an ordinary list box, which NVDA reads immediately.
 
 Press `NVDA+alt+R`.
 
-The dialog opens with the busiest application selected, and announces overall
-processor and memory use as it appears. You can turn that announcement off in
-settings.
+The dialog opens with the busiest application selected, so you are on the
+application you most likely came to find as soon as it appears.
+
+Overall processor and memory use are on `control+T`, spoken only when you ask.
+They are deliberately not announced as the dialog opens: NVDA announces the
+dialog and the selected item at that moment, and anything the add-on said would
+simply be cut off.
 
 Each line tells you everything about one application in a single sentence, for
 example:
@@ -35,6 +39,7 @@ reads as 12 percent, not 100 percent.
   individual processes takes you back up to the application it belongs to.
 - Tab reaches the sort combo box and the buttons.
 - `F5` updates the list immediately.
+- `control+T` announces overall processor and memory use.
 - Escape closes the dialog.
 
 ## Sorting
@@ -86,7 +91,6 @@ alongside your other add-ons. You can set:
 - How often it updates, in seconds.
 - How many applications the spoken shortcuts announce.
 - Whether spoken summaries mention memory as well as processor use.
-- Whether overall totals are announced when the dialog opens.
 
 Whichever update mode you choose, the row you are currently sitting on is never
 rewritten underneath you while the list has focus, and the list always keeps
