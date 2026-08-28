@@ -1,0 +1,21 @@
+# Build output
+*.nvda-addon
+build/
+dist/
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+
+# Generated manifests and docs
+addon/manifest.ini
+addon/doc/*/*.html
+
+# Editors and OS
+.vscode/
+.idea/
+Thumbs.db
+desktop.ini
