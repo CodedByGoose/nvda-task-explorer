@@ -119,6 +119,20 @@ position in the list you were at.
 NVDA 2025.1 or later, tested through NVDA 2026.2. Nothing else needs
 installing.
 
+## Building from source
+
+The add-on is built with SCons, driven by [uv](https://docs.astral.sh/uv/),
+following NV Access's add-on template.
+
+    uv sync
+    uv run scons
+
+That produces `taskExplorer-<version>.nvda-addon` in the repository root, which
+you can open to install. `uv run scons pot` generates the translation template,
+and needs GNU gettext on your PATH.
+
+Tests run with `uv run python -m unittest discover -s tests`.
+
 ## Credits
 
 Written by CodedByGoose, with the help of Quill (Claude agent).
