@@ -48,7 +48,7 @@ PROTECTED_PROCESS_NAMES = frozenset(
         "svchost.exe",
         "dwm.exe",
         "nvda.exe",
-    }
+    },
 )
 
 #: Executable names that say nothing useful about which application they are,
@@ -71,7 +71,7 @@ AMBIGUOUS_PROCESS_NAMES = frozenset(
         "dllhost.exe",
         "svchost.exe",
         "wine.exe",
-    }
+    },
 )
 
 
@@ -388,7 +388,7 @@ def buildSnapshot(previous, previousTime, current, currentTime, cpuCount, window
                 cpuPercent=cpuPercent,
                 memoryBytes=info["memoryBytes"],
                 isProtected=isProtected,
-            )
+            ),
         )
 
     apps = list(groups.values())
@@ -436,7 +436,7 @@ class Sampler:
             try:
                 self.onError(
                     "Task Explorer: fast process enumeration failed its self check "
-                    f"({reason}). Falling back to the slower psutil path."
+                    f"({reason}). Falling back to the slower psutil path.",
                 )
             except Exception:
                 pass

@@ -84,7 +84,7 @@ def buildRows(apps, expandedKeys, sortKey=SORT_CPU):
                         formatting.formatProcessRow(process),
                         app,
                         process,
-                    )
+                    ),
                 )
     return rows
 

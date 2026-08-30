@@ -63,7 +63,7 @@ def formatAppRow(app, isExpanded=False):
             _("expanded")
             if isExpanded
             # Translators: Indicates that an application's individual processes are currently hidden.
-            else _("collapsed")
+            else _("collapsed"),
         )
     return ", ".join(parts)
 
@@ -77,7 +77,7 @@ def formatProcessRow(process):
             _("process {pid}").format(pid=process.pid),
             formatCpu(process.cpuPercent),
             formatMemory(process.memoryBytes),
-        ]
+        ],
     )
 
 
