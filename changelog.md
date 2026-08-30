@@ -1,13 +1,22 @@
 # Changelog
 
-## Unreleased
+## Version 1.0.2
 
 Typing in the list now searches by whole name instead of by first letter. `s`
 then `l` finds Slack, where before the l jumped to the first application
-beginning with l. Part of a name works as well, so `chrome` finds Google Chrome.
+beginning with l. Letters typed within about a second and a half of each other
+build up one search, and a pause starts a new one.
+
+Part of a name works as well, so `chrome` finds Google Chrome. A name that
+begins with what you typed always wins first, so `l` still goes to Logic rather
+than to Slack.
+
 Only the rows on screen are searched, so a search never jumps inside an
-application you have left collapsed, and pressing the same letter repeatedly
-still steps through everything beginning with it.
+application you have left collapsed. Pressing the same letter repeatedly still
+steps through everything beginning with it.
+
+The list box's own first-letter search is what caused the original behaviour,
+and it is no longer given the chance to run.
 
 ## Version 1.0.1
 

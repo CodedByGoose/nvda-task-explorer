@@ -26,10 +26,16 @@ single row you can expand. You can sort by CPU, memory or name, and end a task
 directly from the list. Spoken shortcuts announce the busiest applications
 without opening any window."""
     ),
-    "addon_version": "1.0.1",
+    "addon_version": "1.0.2",
     # Translators: The changelog shown on the add-on's information page.
     "addon_changelog": _(
-        """Version 1.0.1
+        """Version 1.0.2
+
+Typing in the list now searches by whole name rather than by first letter, so
+typing s then l finds Slack. Part of a name works too. Only the rows on screen
+are searched, so a search never jumps inside a collapsed application.
+
+Version 1.0.1
 
 Tested with NVDA 2026.2. A single build now covers NVDA 2025.1 through 2026.2.
 
