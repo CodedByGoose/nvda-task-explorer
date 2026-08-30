@@ -78,7 +78,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
     @script(
         # Translators: The description of a command, shown in NVDA's Input Gestures dialog.
         description=_("Shows the Task Explorer, listing applications by how much they are using"),
-        gesture="kb:NVDA+alt+r",
+        gesture="kb:NVDA+alt+e",
     )
     def script_showResourceManager(self, gesture):
         self._syncSamplerInterval()

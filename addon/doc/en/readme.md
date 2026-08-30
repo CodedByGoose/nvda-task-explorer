@@ -10,7 +10,7 @@ puts the result in an ordinary list box, which NVDA reads immediately.
 
 ## Opening the list
 
-Press `NVDA+alt+R`.
+Press `NVDA+alt+E`.
 
 The dialog opens with the busiest application selected, so you are on the
 application you most likely came to find as soon as it appears.

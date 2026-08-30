@@ -31,6 +31,8 @@ without opening any window."""
     "addon_changelog": _(
         """Version 1.0.2
 
+The dialog now opens on NVDA+alt+E rather than NVDA+alt+R.
+
 Typing in the list now searches by whole name rather than by first letter, so
 typing s then l finds Slack. Part of a name works too. Only the rows on screen
 are searched, so a search never jumps inside a collapsed application.

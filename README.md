@@ -32,7 +32,7 @@ read process activity, has shipped inside NVDA since version 2024.2.
 
 ## Keyboard commands
 
-- `NVDA+alt+R` opens the Task Explorer dialog.
+- `NVDA+alt+E` opens the Task Explorer dialog.
 - Announcing the top applications by CPU, and by memory, are available as
   unassigned commands. Bind them to whatever you like under Task Explorer in
   NVDA's Input Gestures dialog.

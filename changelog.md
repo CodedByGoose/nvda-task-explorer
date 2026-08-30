@@ -2,6 +2,8 @@
 
 ## Version 1.0.2
 
+The dialog now opens on `NVDA+alt+E` rather than `NVDA+alt+R`.
+
 Typing in the list now searches by whole name instead of by first letter. `s`
 then `l` finds Slack, where before the l jumped to the first application
 beginning with l. Letters typed within about a second and a half of each other
