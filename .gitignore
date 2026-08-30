@@ -19,3 +19,6 @@ addon/doc/*/*.html
 .idea/
 Thumbs.db
 desktop.ini
+
+# Working notes for Claude, not part of the add-on
+claude plans/
