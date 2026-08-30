@@ -32,6 +32,12 @@ reads as 12 percent, not 100 percent.
 ## Moving around
 
 - Up and down arrows move through the list.
+- Typing jumps to an application by name. Keep typing to narrow it down: `s`
+  then `l` finds Slack rather than the first application beginning with l. A
+  pause of about a second and a half starts a new search. Typing part of a name
+  works too, so `chrome` finds Google Chrome. Only the rows you can see are
+  searched, so a search never jumps inside a collapsed application. Pressing the
+  same letter over and over still steps through everything beginning with it.
 - Right arrow, or enter, expands an application to show its individual
   processes. Applications made of a single process do not expand, and do not
   claim to be collapsed.

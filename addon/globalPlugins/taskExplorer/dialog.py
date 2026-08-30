@@ -31,6 +31,12 @@ FREEZE_SECONDS = 2.0
 #: How long to give a process to close politely before offering to force it.
 GRACEFUL_TIMEOUT_SECONDS = 4.0
 
+#: How long a typed search stays open. Another letter within this time carries on
+#: the same search, so "s", "l" finds Slack. After it, the next letter starts
+#: afresh. A little longer than the Windows default, which is unkindly short if
+#: you are listening to each row as you go.
+TYPE_AHEAD_SECONDS = 1.5
+
 #: alt plus a number picks a sort order, indexing into rowmodel.SORT_KEYS.
 #: The number row and the numeric keypad both work.
 SORT_SHORTCUT_KEYS = {
@@ -76,6 +82,8 @@ class ResourceManagerDialog(wx.Dialog):
         self._rows = []
         self._lastNavigation = 0.0
         self._sortKey = rowmodel.SORT_CPU
+        self._searchText = ""
+        self._lastTypedAt = 0.0
 
         self._buildUi()
         self._refresh(force=True)
@@ -243,6 +251,16 @@ class ResourceManagerDialog(wx.Dialog):
         key = evt.GetKeyCode()
         if self.list.HasFocus():
             self._lastNavigation = time.monotonic()
+            char = self._typedCharacter(evt)
+            if char is not None:
+                # Deliberately not passed on to the list box. Its own search only
+                # ever looks at the first letter, so leaving it to do the work is
+                # what makes "s", "l" jump to the first L rather than to Slack.
+                self._typeAhead(char)
+                return
+            # Any other key ends the search in progress, so the next letter typed
+            # starts a new one rather than continuing a half typed word.
+            self._searchText = ""
             if key == wx.WXK_RIGHT:
                 self._setExpanded(True)
                 return
@@ -270,6 +288,54 @@ class ResourceManagerDialog(wx.Dialog):
             self.Close()
             return
         evt.Skip()
+
+    # --- Typing to find a row -------------------------------------------------
+
+    def _typedCharacter(self, evt):
+        """The printable character a key press stands for, or None if it is not one."""
+        if evt.HasAnyModifiers():
+            # alt and control belong to the shortcuts, not to the search.
+            return None
+        code = evt.GetUnicodeKey()
+        if code == wx.WXK_NONE or code < ord(" ") or code == wx.WXK_DELETE:
+            return None
+        return chr(code).lower()
+
+    def _typeAhead(self, char):
+        """Move to the next row on screen matching everything typed so far."""
+        now = time.monotonic()
+        if now - self._lastTypedAt > TYPE_AHEAD_SECONDS:
+            self._searchText = ""
+        self._lastTypedAt = now
+
+        if char == " " and not self._searchText:
+            # No name begins with a space, and space on its own should sit still.
+            return
+
+        selected = self.list.GetSelection()
+        if selected == wx.NOT_FOUND:
+            selected = -1
+        query = self._searchText + char
+
+        index = None
+        if self._searchText:
+            # The row already found is still a candidate, so typing more of the
+            # name it matched narrows the search instead of skipping past it.
+            index = rowmodel.findTypeAheadMatch(self._rows, query, selected)
+        if index is None and query == char * len(query):
+            # A fresh letter, or the same letter pressed again with nothing
+            # longer to match: step on to the next row starting with it, which is
+            # how lists have always been walked and is worth keeping.
+            query = char
+            index = rowmodel.findTypeAheadMatch(self._rows, query, selected + 1)
+
+        self._searchText = query
+        if index is not None:
+            # NVDA announces the row itself as the selection moves, so nothing is
+            # spoken here. Nothing is spoken for no match either: silence is the
+            # answer every other Windows list gives, and a message on every
+            # keystroke would talk over the name being typed.
+            self.list.SetSelection(index)
 
     def _currentRow(self):
         index = self.list.GetSelection()

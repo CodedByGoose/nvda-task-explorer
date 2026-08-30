@@ -193,5 +193,57 @@ class TestRowBuilding(unittest.TestCase):
         self.assertEqual(rowmodel.SORT_KEYS, ("cpu", "memory", "name"))
 
 
+class TestTypingToFindARow(unittest.TestCase):
+    def setUp(self):
+        self.apps = [
+            makeApp("Slack", cpu=9.0),
+            makeApp("Google Chrome", cpu=5.0, processCount=3),
+            makeApp("Signal", cpu=3.0),
+            makeApp("Logic", cpu=1.0),
+        ]
+        self.rows = rowmodel.buildRows(self.apps, expandedKeys=set())
+
+    def match(self, query, start=0, rows=None):
+        return rowmodel.findTypeAheadMatch(self.rows if rows is None else rows, query, start)
+
+    def test_rowsAreSearchedByNameNotByTheirNumbers(self):
+        # "MB" appears in every label, so matching the whole label would make the
+        # letter m land on whichever row happened to come first.
+        self.assertEqual([r.searchText for r in self.rows], ["slack", "google chrome", "signal", "logic"])
+
+    def test_aSecondLetterCarriesOnTheSameSearch(self):
+        # The bug this replaced: "s" then "l" jumped to Logic.
+        self.assertEqual(self.match("sl"), 0)
+
+    def test_aSingleLetterFindsTheFirstNameStartingWithIt(self):
+        self.assertEqual(self.match("s"), 0)
+
+    def test_searchWrapsAroundToTheTopOfTheList(self):
+        # Starting below Slack, "s" reaches Signal and then comes back round.
+        self.assertEqual(self.match("s", start=2), 2)
+        self.assertEqual(self.match("s", start=3), 0)
+
+    def test_startOfANameBeatsTheMiddleOfAnother(self):
+        # Logic starts with l, Slack merely contains one.
+        self.assertEqual(self.match("l"), 3)
+
+    def test_aNameCanBeFoundByItsSecondWord(self):
+        self.assertEqual(self.match("chrome"), 1)
+
+    def test_nothingMatchingLeavesTheSelectionAlone(self):
+        self.assertIsNone(self.match("zz"))
+
+    def test_collapsedProcessesAreNotSearched(self):
+        # Chrome's children are named "Google Chrome 0" and so on. Collapsed,
+        # they are not rows at all, so a search cannot land inside them.
+        self.assertEqual(len(self.rows), 4)
+        expanded = rowmodel.buildRows(self.apps, expandedKeys={self.apps[1].key})
+        self.assertEqual(self.match("google chrome 1", rows=expanded), 3)
+        self.assertIsNone(self.match("google chrome 1"))
+
+    def test_anEmptyListIsHarmless(self):
+        self.assertIsNone(self.match("s", rows=[]))
+
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)

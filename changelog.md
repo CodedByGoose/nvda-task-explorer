@@ -1,5 +1,14 @@
 # Changelog
 
+## Unreleased
+
+Typing in the list now searches by whole name instead of by first letter. `s`
+then `l` finds Slack, where before the l jumped to the first application
+beginning with l. Part of a name works as well, so `chrome` finds Google Chrome.
+Only the rows on screen are searched, so a search never jumps inside an
+application you have left collapsed, and pressing the same letter repeatedly
+still steps through everything beginning with it.
+
 ## Version 1.0.1
 
 Tested with NVDA 2026.2, and `lastTestedNVDAVersion` raised to match.

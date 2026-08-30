@@ -23,13 +23,17 @@ SORT_KEYS = (SORT_CPU, SORT_MEMORY, SORT_NAME)
 class Row:
     """One line in the list: either an application, or a process within one."""
 
-    __slots__ = ("key", "label", "app", "process")
+    __slots__ = ("key", "label", "app", "process", "searchText")
 
     def __init__(self, key, label, app, process=None):
         self.key = key
         self.label = label
         self.app = app
         self.process = process
+        # Typing to find a row matches the name only. Matching the whole label
+        # would let a typed letter land on a memory figure or on the word
+        # "collapsed", neither of which anyone is ever looking for.
+        self.searchText = (app.displayName if process is None else process.displayName).lower()
 
     @property
     def isApp(self):
@@ -90,4 +94,27 @@ def findRowIndex(rows, key):
     for index, row in enumerate(rows):
         if row.key == key:
             return index
+    return None
+
+
+def findTypeAheadMatch(rows, query, start):
+    """Find the row that typing `query` should move to, or None for no match.
+
+    Only the rows passed in are considered, and those are exactly the rows on
+    screen, so a search can never land inside a collapsed application.
+
+    The scan wraps around from `start`, so a search begun part way down the list
+    still reaches everything above it. A name that begins with what was typed
+    always wins over one that merely contains it, so "s" lands on Slack rather
+    than on the first application with an s buried in the middle of its name.
+    Falling back to a match anywhere in the name is what makes "chrome" find
+    Google Chrome.
+    """
+    if not rows or not query:
+        return None
+    order = [(start + offset) % len(rows) for offset in range(len(rows))]
+    for matches in (lambda text: text.startswith(query), lambda text: query in text):
+        for index in order:
+            if matches(rows[index].searchText):
+                return index
     return None

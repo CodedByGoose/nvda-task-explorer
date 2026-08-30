@@ -37,9 +37,10 @@ read process activity, has shipped inside NVDA since version 2024.2.
   unassigned commands. Bind them to whatever you like under Task Explorer in
   NVDA's Input Gestures dialog.
 
-Inside the dialog: arrow keys move through the list, right arrow or enter
-expands an application to show its individual processes, left arrow collapses it
-again, tab reaches the sort combo box and the buttons, and escape closes.
+Inside the dialog: arrow keys move through the list, typing jumps to an
+application by name, right arrow or enter expands an application to show its
+individual processes, left arrow collapses it again, tab reaches the sort combo
+box and the buttons, and escape closes.
 
 ## Building from source
 
