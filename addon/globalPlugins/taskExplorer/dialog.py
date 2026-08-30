@@ -408,7 +408,7 @@ class ResourceManagerDialog(wx.Dialog):
                 _(
                     "Task Explorer will not end NVDA, because doing so would leave you "
                     "with no speech and no way to get it back. Exit NVDA from its own menu "
-                    "if that is what you want."
+                    "if that is what you want.",
                 ),
                 # Translators: The title of a message refusing to end a process.
                 _("Cannot end this task"),
@@ -425,7 +425,7 @@ class ResourceManagerDialog(wx.Dialog):
                         "{name} is a critical Windows process. Ending it will very likely "
                         "make Windows unstable or restart your computer without warning, and "
                         "you will lose unsaved work.\n\n"
-                        "Are you certain you want to continue?"
+                        "Are you certain you want to continue?",
                     ).format(name=name),
                     # Translators: The title of a warning about ending a critical process.
                     _("Critical system process"),
@@ -439,13 +439,12 @@ class ResourceManagerDialog(wx.Dialog):
         if len(targets) > 1:
             # Translators: Confirmation before ending an application that has several processes.
             question = _(
-                "End {name}?\n\nIts {count} processes will be asked to close. You may be "
-                "prompted to save your work."
+                "End {name}?\n\nIts {count} processes will be asked to close. You may be prompted to save your work.",
             ).format(name=name, count=len(targets))
         else:
             # Translators: Confirmation before ending a single process.
             question = _(
-                "End {name}?\n\nIt will be asked to close, and may prompt you to save your work."
+                "End {name}?\n\nIt will be asked to close, and may prompt you to save your work.",
             ).format(name=name)
 
         if (
@@ -531,14 +530,14 @@ class ResourceManagerDialog(wx.Dialog):
             question = _(
                 "{name} has no window that can be asked to close, so it cannot be closed "
                 "politely. This is usual for background services.\n\n"
-                "Force it to close? This is immediate and any unsaved work will be lost."
+                "Force it to close? This is immediate and any unsaved work will be lost.",
             ).format(name=name)
         else:
             # Translators: Offered when an application ignored a polite request to close.
             question = _(
                 "{name} has not closed. {count} of its processes are still running.\n\n"
                 "Force them to close? This is immediate and unsaved work will definitely "
-                "be lost."
+                "be lost.",
             ).format(name=name, count=len(processes))
 
         if (
@@ -570,8 +569,8 @@ class ResourceManagerDialog(wx.Dialog):
                 # Translators: Spoken when the user lacks permission to end an application.
                 _(
                     "Could not close {name}. It is running with higher privileges than NVDA, "
-                    "so Windows will not let this add-on close it."
-                ).format(name=name)
+                    "so Windows will not let this add-on close it.",
+                ).format(name=name),
             )
         elif failed:
             # Translators: Spoken when forcing an application to close did not work.

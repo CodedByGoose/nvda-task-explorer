@@ -64,7 +64,9 @@ class ResourceManagerSettingsPanel(gui.settingsDialogs.SettingsPanel):
             _("Continuously, but pause while I am moving through the list"),
         ]
         self.refreshModeCombo = helper.addLabeledControl(
-            refreshModeLabel, wx.Choice, choices=self.refreshModeChoices
+            refreshModeLabel,
+            wx.Choice,
+            choices=self.refreshModeChoices,
         )
         self.refreshModeCombo.SetSelection(REFRESH_MODES.index(getSetting("refreshMode")))
 
@@ -90,7 +92,7 @@ class ResourceManagerSettingsPanel(gui.settingsDialogs.SettingsPanel):
 
         # Translators: The label for a checkbox controlling whether spoken summaries mention memory use.
         self.includeMemoryCheckBox = helper.addItem(
-            wx.CheckBox(self, label=_("Include &memory use in spoken summaries"))
+            wx.CheckBox(self, label=_("Include &memory use in spoken summaries")),
         )
         self.includeMemoryCheckBox.SetValue(getSetting("includeMemoryInSpokenSummary"))
 

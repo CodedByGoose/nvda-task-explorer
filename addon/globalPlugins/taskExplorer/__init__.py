@@ -72,7 +72,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
                 apps,
                 includeMemory=settings.getSetting("includeMemoryInSpokenSummary"),
                 byMemory=byMemory,
-            )
+            ),
         )
 
     @script(

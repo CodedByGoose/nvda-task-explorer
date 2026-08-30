@@ -42,7 +42,7 @@ def makeApp(name, cpu=0.0, memory=MB, processCount=1, key=None, isProtected=Fals
                 displayName=f"{name} {index}",
                 cpuPercent=cpu / max(processCount, 1),
                 memoryBytes=memory // max(processCount, 1),
-            )
+            ),
         )
     return app
 
