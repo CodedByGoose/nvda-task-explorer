@@ -78,6 +78,10 @@ class ResourceManagerDialog(wx.Dialog):
 		super().__init__(parent, title=_("Task Explorer"))
 		ResourceManagerDialog._instance = self
 		self._sampler = sampler
+		#: The measurements the list was last built from. Held here so that
+		#: sorting or expanding a row never quietly takes a new sample, which
+		#: matters when the user has asked for the list to stay still.
+		self._snapshot = None
 		self._expandedKeys = set()
 		self._rows = []
 		self._lastNavigation = 0.0
@@ -86,6 +90,7 @@ class ResourceManagerDialog(wx.Dialog):
 		self._lastTypedAt = 0.0
 
 		self._buildUi()
+		self._syncRefreshControls()
 		self._refresh(force=True)
 
 		self._timer = wx.Timer(self)
@@ -160,7 +165,27 @@ class ResourceManagerDialog(wx.Dialog):
 			return False
 		return (time.monotonic() - self._lastNavigation) < FREEZE_SECONDS
 
+	def _syncRefreshControls(self):
+		"""Offer the Refresh button only while the list is not updating itself.
+
+		When the timer is already doing the work, the button would only repeat
+		it, and a button that seems to do nothing is confusing. When the user has
+		asked for a still list, it is the one way to get fresh numbers.
+		"""
+		manual = not settings.refreshesAutomatically()
+		if self.refreshButton.IsEnabled() == manual:
+			return
+		if not manual and self.refreshButton.HasFocus():
+			# Disabling the focused control would leave the keyboard nowhere.
+			self.list.SetFocus()
+		self.refreshButton.Enable(manual)
+
 	def _onTimer(self, evt):
+		# The mode can be changed in NVDA's settings while this dialog is open,
+		# so the button follows it here rather than only when the dialog opens.
+		self._syncRefreshControls()
+		if not settings.refreshesAutomatically():
+			return
 		if self._shouldHoldStill():
 			return
 		self._refresh()
@@ -170,9 +195,22 @@ class ResourceManagerDialog(wx.Dialog):
 		# Translators: Spoken after the list has been updated on request.
 		ui.message(_("Updated"))
 
+	def _onManualRefreshRequested(self):
+		"""F5 was pressed. Honour it only when the list is not updating itself."""
+		if self.refreshButton.IsEnabled():
+			self._onRefreshButton(None)
+			return
+		# Translators: Spoken when F5 is pressed but the list is already updating on its own.
+		ui.message(_("The list is already updating on its own"))
+
 	def _refresh(self, force=False):
-		snapshot = self._sampler.getSnapshot()
-		newRows = buildRows(snapshot.apps, self._expandedKeys, self._sortKey)
+		"""Take a fresh measurement and rebuild the list from it."""
+		self._snapshot = self._sampler.getSnapshot()
+		self._rebuildRows(force)
+
+	def _rebuildRows(self, force=False):
+		"""Rebuild the list from the measurement already held, without sampling again."""
+		newRows = buildRows(self._snapshot.apps, self._expandedKeys, self._sortKey)
 
 		oldKeys = [row.key for row in self._rows]
 		newKeys = [row.key for row in newRows]
@@ -240,7 +278,7 @@ class ResourceManagerDialog(wx.Dialog):
 			return
 		self.sortCombo.SetSelection(index)
 		self._sortKey = SORT_KEYS[index]
-		self._refresh(force=True)
+		self._rebuildRows(force=True)
 		if self._rows:
 			self.list.SetSelection(0)
 		if announce:
@@ -271,13 +309,14 @@ class ResourceManagerDialog(wx.Dialog):
 				self._onToggleExpand(evt)
 				return
 		if key == wx.WXK_F5:
-			self._onRefreshButton(evt)
+			self._onManualRefreshRequested()
 			return
 		if evt.AltDown():
 			if key == ord("T"):
 				# Spoken only on request. Announcing totals as the dialog opens
 				# does not work: NVDA's focus announcement cancels it every time.
-				ui.message(formatting.formatTotals(self._sampler.getSnapshot()))
+				# The held measurement is used so the totals agree with the list.
+				ui.message(formatting.formatTotals(self._snapshot))
 				return
 			sortIndex = SORT_SHORTCUT_KEYS.get(key)
 			if sortIndex is not None:
@@ -358,7 +397,7 @@ class ResourceManagerDialog(wx.Dialog):
 			# Left arrow on a child jumps back to its application.
 			if not expand:
 				self._expandedKeys.discard(app.key)
-				self._refresh(force=True)
+				self._rebuildRows(force=True)
 				self._restoreSelection(rowmodel.appRowKey(app))
 				# Translators: Spoken when an application's processes are hidden again.
 				ui.message(_("collapsed"))
@@ -377,7 +416,7 @@ class ResourceManagerDialog(wx.Dialog):
 			self._expandedKeys.discard(app.key)
 			# Translators: Spoken when an application's processes are hidden again.
 			message = _("collapsed")
-		self._refresh(force=True)
+		self._rebuildRows(force=True)
 		self._restoreSelection(rowmodel.appRowKey(app))
 		ui.message(message)
 

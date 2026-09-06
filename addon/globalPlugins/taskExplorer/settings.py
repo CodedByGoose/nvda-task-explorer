@@ -23,8 +23,15 @@ CONFIG_SECTION = "taskExplorer"
 REFRESH_ALWAYS = "always"
 #: Hold the list still while the user is arrowing through it.
 REFRESH_FREEZE_WHILE_NAVIGATING = "freeze"
+#: Take one snapshot as the dialog opens and change nothing until asked.
+REFRESH_MANUAL = "manual"
 
-REFRESH_MODES = (REFRESH_ALWAYS, REFRESH_FREEZE_WHILE_NAVIGATING)
+#: Every mode, in the order the settings panel lists them.
+REFRESH_MODES = (REFRESH_ALWAYS, REFRESH_FREEZE_WHILE_NAVIGATING, REFRESH_MANUAL)
+
+#: The modes in which the timer keeps the list fresh on its own. A Refresh button
+#: in these modes would only repeat what is already happening.
+AUTOMATIC_REFRESH_MODES = (REFRESH_ALWAYS, REFRESH_FREEZE_WHILE_NAVIGATING)
 
 MIN_INTERVAL = 1
 MAX_INTERVAL = 30
@@ -32,7 +39,10 @@ MIN_TOP_COUNT = 1
 MAX_TOP_COUNT = 10
 
 confspec = {
-	"refreshMode": f'option("{REFRESH_ALWAYS}", "{REFRESH_FREEZE_WHILE_NAVIGATING}", default="{REFRESH_ALWAYS}")',
+	"refreshMode": 'option({modes}, default="{default}")'.format(
+		modes=", ".join(f'"{mode}"' for mode in REFRESH_MODES),
+		default=REFRESH_ALWAYS,
+	),
 	"refreshInterval": f"integer(default=2, min={MIN_INTERVAL}, max={MAX_INTERVAL})",
 	"topAppCount": f"integer(default=3, min={MIN_TOP_COUNT}, max={MAX_TOP_COUNT})",
 	"includeMemoryInSpokenSummary": "boolean(default=true)",
@@ -46,6 +56,11 @@ def initialiseConfig():
 
 def getSetting(key):
 	return config.conf[CONFIG_SECTION][key]
+
+
+def refreshesAutomatically():
+	"""True when the list is kept up to date by the timer rather than by the user."""
+	return getSetting("refreshMode") in AUTOMATIC_REFRESH_MODES
 
 
 class ResourceManagerSettingsPanel(gui.settingsDialogs.SettingsPanel):
@@ -62,6 +77,8 @@ class ResourceManagerSettingsPanel(gui.settingsDialogs.SettingsPanel):
 			_("Continuously"),
 			# Translators: A refresh option: updates pause while the user moves through the list.
 			_("Continuously, but pause while I am moving through the list"),
+			# Translators: A refresh option: the list is captured once and only changes when asked.
+			_("Only when I press Refresh or F5"),
 		]
 		self.refreshModeCombo = helper.addLabeledControl(
 			refreshModeLabel,

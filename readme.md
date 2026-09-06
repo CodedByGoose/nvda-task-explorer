@@ -44,7 +44,8 @@ reads as 12 percent, not 100 percent.
 - Left arrow collapses it again. Pressing left arrow while on one of the
   individual processes takes you back up to the application it belongs to.
 - Tab reaches the sort combo box and the buttons.
-- `F5` updates the list immediately.
+- `F5` updates the list, when you have chosen to update it yourself. See
+  Keeping the list up to date, below.
 - `alt+T` announces overall processor and memory use.
 - `alt+1`, `alt+2` and `alt+3` sort by processor use, memory use and name.
 - Escape closes the dialog.
@@ -97,22 +98,42 @@ Gestures dialog:
 How many applications they mention, and whether they mention memory as well as
 processor use, are both settings.
 
+## Keeping the list up to date
+
+Out of the box the list updates itself every two seconds, so the numbers you
+hear are current without you doing anything. The Update the list setting,
+described below, offers three ways of working:
+
+- Continuously. The list is rebuilt on every tick. This is the default.
+- Continuously, but pause while I am moving through the list. The same, except
+  that updates hold off for a couple of seconds after each key press, so rows do
+  not reorder while you are stepping through them. Worth choosing if you find
+  the list distracting to read while values are changing.
+- Only when I press Refresh or F5. The list is a snapshot taken as the dialog
+  opens, and nothing changes until you ask. Choose this if you want to study the
+  list at leisure and update it on your own terms.
+
+The Refresh button, and `F5`, are only available in the last mode. In the two
+continuous modes the list is already updating itself, so the button is disabled
+rather than left in place doing something you cannot tell apart from the timer.
+If you press `F5` in one of those modes, Task Explorer says so.
+
+Whichever mode you choose, the row you are sitting on is never rewritten
+underneath you while the list has focus, sorting and expanding never take a new
+measurement of their own, and the list always keeps your place by remembering
+which application you were on rather than which position in the list you were
+at.
+
 ## Settings
 
 Task Explorer appears in NVDA's own Settings dialog, in the category list
 alongside your other add-ons. You can set:
 
-- Whether the list updates continuously, or pauses while you are moving through
-  it. Pausing is worth choosing if you find the list distracting to read while
-  values are changing.
+- Update the list: continuously, continuously but paused while you move, or only
+  when you press Refresh or F5. See Keeping the list up to date, above.
 - How often it updates, in seconds.
 - How many applications the spoken shortcuts announce.
 - Whether spoken summaries mention memory as well as processor use.
-
-Whichever update mode you choose, the row you are currently sitting on is never
-rewritten underneath you while the list has focus, and the list always keeps
-your place by remembering which application you were on rather than which
-position in the list you were at.
 
 ## Requirements
 
@@ -132,6 +153,12 @@ you can open to install. `uv run scons pot` generates the translation template,
 and needs GNU gettext on your PATH.
 
 Tests run with `uv run python -m unittest discover -s tests`.
+
+## AI code disclosure
+
+Parts of Task Explorer were written with AI assistance, alongside code written
+by hand. All of it is directed, reviewed and tested by a person, on a real
+machine, with NVDA running.
 
 ## Credits
 

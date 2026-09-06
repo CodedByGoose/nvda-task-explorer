@@ -33,9 +33,18 @@ Applications are grouped so that a browser's many helper processes appear as a
 single row you can expand. You can sort by CPU, memory or name, and end a task
 directly from the list. Spoken shortcuts announce the busiest applications
 without opening any window."""),
-	addon_version="1.0.2",
+	addon_version="1.0.3",
 	# Translators: The changelog shown on the add-on's information page.
-	addon_changelog=_("""Version 1.0.2
+	addon_changelog=_("""Version 1.0.3
+
+The list can now be updated only when you press Refresh or F5, as a third
+choice alongside the two continuous modes. In the continuous modes the Refresh
+button is disabled, because the list is already updating itself.
+
+Sorting and expanding rearrange the numbers already on screen instead of taking
+a new measurement, and the alt+T totals now agree with the list.
+
+Version 1.0.2
 
 The dialog now opens on NVDA+alt+E rather than NVDA+alt+R.
 
