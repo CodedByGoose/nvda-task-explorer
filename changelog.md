@@ -1,5 +1,29 @@
 # Changelog
 
+## Version 1.0.3
+
+A third way of keeping the list up to date: only when you press Refresh or
+`F5`. The list is a snapshot taken as the dialog opens and nothing moves until
+you ask, so you can study it at leisure.
+
+The Refresh button is now disabled while the list is updating itself, in either
+of the continuous modes. It only ever repeated what the timer was already doing,
+and a button that seems to do nothing is confusing. `F5` in those modes says so
+instead of silently refreshing.
+
+Sorting and expanding no longer take a new measurement of their own. They
+rearrange the numbers already on screen, which is what a still list needs and
+what the continuous modes were about to do on the next tick anyway. Overall
+totals on `alt+T` now come from the same measurement as the list, so the two
+always agree.
+
+The source is now indented with tabs, following NVDA's coding standards and the
+add-on template, as suggested during the add-on store review. Nothing the add-on
+does has changed because of it.
+
+The readme now says plainly that parts of the add-on were written with AI
+assistance.
+
 ## Version 1.0.2
 
 The dialog now opens on `NVDA+alt+E` rather than `NVDA+alt+R`.
