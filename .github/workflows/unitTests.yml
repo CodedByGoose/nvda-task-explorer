@@ -8,7 +8,9 @@ on:
 jobs:
   unit-tests:
     name: Run Unit Tests
-    runs-on: ubuntu-latest
+    # Windows, not Ubuntu as in the template: the add-on reads process
+    # information through Windows-only parts of ctypes at import time.
+    runs-on: windows-latest
 
     steps:
       - name: Checkout repository
