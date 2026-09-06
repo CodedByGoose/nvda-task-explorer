@@ -20,16 +20,16 @@ import zipfile
 
 # Manifest fields that must be identical between the two packages.
 MANIFEST_FIELDS = [
-    "name",
-    "version",
-    "summary",
-    "description",
-    "author",
-    "url",
-    "docFileName",
-    "minimumNVDAVersion",
-    "lastTestedNVDAVersion",
-    "changelog",
+	"name",
+	"version",
+	"summary",
+	"description",
+	"author",
+	"url",
+	"docFileName",
+	"minimumNVDAVersion",
+	"lastTestedNVDAVersion",
+	"changelog",
 ]
 
 # Entries that are allowed to differ, or to be present in only one package.
@@ -39,94 +39,96 @@ GENERATED = ("doc/",)
 
 
 def readManifest(archive):
-    """Return the manifest of an archive as a dict of field name to value.
+	"""Return the manifest of an archive as a dict of field name to value.
 
-    NVDA manifests are not quite ini files: values may be bare, double quoted,
-    or triple quoted and spanning several lines, which configparser cannot read.
-    """
-    lines = archive.read("manifest.ini").decode("utf-8").splitlines()
-    fields = {}
-    index = 0
-    while index < len(lines):
-        line = lines[index]
-        index += 1
-        if not line.strip() or line.lstrip().startswith("#") or "=" not in line:
-            continue
-        key, _, value = line.partition("=")
-        key = key.strip()
-        value = value.strip()
-        if value.startswith('"""'):
-            collected = [value[3:]]
-            while not collected[-1].endswith('"""') and index < len(lines):
-                collected.append(lines[index])
-                index += 1
-            collected[-1] = collected[-1].removesuffix('"""')
-            fields[key] = "\n".join(collected).strip()
-        else:
-            fields[key] = value.strip('"').strip()
-    return fields
+	NVDA manifests are not quite ini files: values may be bare, double quoted,
+	or triple quoted and spanning several lines, which configparser cannot read.
+	"""
+	lines = archive.read("manifest.ini").decode("utf-8").splitlines()
+	fields = {}
+	index = 0
+	while index < len(lines):
+		line = lines[index]
+		index += 1
+		if not line.strip() or line.lstrip().startswith("#") or "=" not in line:
+			continue
+		key, _, value = line.partition("=")
+		key = key.strip()
+		value = value.strip()
+		if value.startswith('"""'):
+			collected = [value[3:]]
+			while not collected[-1].endswith('"""') and index < len(lines):
+				collected.append(lines[index])
+				index += 1
+			collected[-1] = collected[-1].removesuffix('"""')
+			fields[key] = "\n".join(collected).strip()
+		else:
+			fields[key] = value.strip('"').strip()
+	return fields
 
 
 def compare(referencePath, candidatePath):
-    """Compare two packages. Returns a list of failure messages, empty if equivalent."""
-    failures = []
-    notes = []
+	"""Compare two packages. Returns a list of failure messages, empty if equivalent."""
+	failures = []
+	notes = []
 
-    with zipfile.ZipFile(referencePath) as reference, zipfile.ZipFile(candidatePath) as candidate:
-        referenceNames = set(reference.namelist())
-        candidateNames = set(candidate.namelist())
+	with zipfile.ZipFile(referencePath) as reference, zipfile.ZipFile(candidatePath) as candidate:
+		referenceNames = set(reference.namelist())
+		candidateNames = set(candidate.namelist())
 
-        for name in sorted(referenceNames - candidateNames):
-            if name.startswith(GENERATED):
-                notes.append(f"absent, generated: {name}")
-            else:
-                failures.append(f"missing from {candidatePath}: {name}")
-        for name in sorted(candidateNames - referenceNames):
-            if name.startswith(GENERATED):
-                notes.append(f"added, generated: {name}")
-            else:
-                failures.append(f"unexpected in {candidatePath}: {name}")
+		for name in sorted(referenceNames - candidateNames):
+			if name.startswith(GENERATED):
+				notes.append(f"absent, generated: {name}")
+			else:
+				failures.append(f"missing from {candidatePath}: {name}")
+		for name in sorted(candidateNames - referenceNames):
+			if name.startswith(GENERATED):
+				notes.append(f"added, generated: {name}")
+			else:
+				failures.append(f"unexpected in {candidatePath}: {name}")
 
-        for name in sorted(referenceNames & candidateNames):
-            if name == "manifest.ini":
-                continue
-            if reference.read(name) == candidate.read(name):
-                continue
-            if name.startswith(GENERATED):
-                notes.append(f"differs, generated: {name}")
-            else:
-                failures.append(f"contents differ: {name}")
+		for name in sorted(referenceNames & candidateNames):
+			if name == "manifest.ini":
+				continue
+			if reference.read(name) == candidate.read(name):
+				continue
+			if name.startswith(GENERATED):
+				notes.append(f"differs, generated: {name}")
+			else:
+				failures.append(f"contents differ: {name}")
 
-        referenceManifest = readManifest(reference)
-        candidateManifest = readManifest(candidate)
+		referenceManifest = readManifest(reference)
+		candidateManifest = readManifest(candidate)
 
-    for field in MANIFEST_FIELDS:
-        expected = referenceManifest.get(field)
-        actual = candidateManifest.get(field)
-        if expected != actual:
-            failures.append(f"manifest field {field} differs:\n  reference: {expected!r}\n  candidate: {actual!r}")
+	for field in MANIFEST_FIELDS:
+		expected = referenceManifest.get(field)
+		actual = candidateManifest.get(field)
+		if expected != actual:
+			failures.append(
+				f"manifest field {field} differs:\n  reference: {expected!r}\n  candidate: {actual!r}",
+			)
 
-    for note in notes:
-        print(note)
+	for note in notes:
+		print(note)
 
-    return failures
+	return failures
 
 
 def main(argv):
-    if len(argv) != 3:
-        print(__doc__.strip(), file=sys.stderr)
-        return 2
+	if len(argv) != 3:
+		print(__doc__.strip(), file=sys.stderr)
+		return 2
 
-    failures = compare(argv[1], argv[2])
-    if failures:
-        print(f"\n{len(failures)} difference(s):", file=sys.stderr)
-        for failure in failures:
-            print(f"  {failure}", file=sys.stderr)
-        return 1
+	failures = compare(argv[1], argv[2])
+	if failures:
+		print(f"\n{len(failures)} difference(s):", file=sys.stderr)
+		for failure in failures:
+			print(f"  {failure}", file=sys.stderr)
+		return 1
 
-    print(f"\n{argv[2]} is equivalent to {argv[1]}.")
-    return 0
+	print(f"\n{argv[2]} is equivalent to {argv[1]}.")
+	return 0
 
 
 if __name__ == "__main__":
-    sys.exit(main(sys.argv))
+	sys.exit(main(sys.argv))

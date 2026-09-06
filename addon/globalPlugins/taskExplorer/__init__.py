@@ -22,102 +22,104 @@ addonHandler.initTranslation()
 
 
 class GlobalPlugin(globalPluginHandler.GlobalPlugin):
-    # Translators: The category these commands appear under in NVDA's Input Gestures dialog.
-    scriptCategory = _("Task Explorer")
+	# Translators: The category these commands appear under in NVDA's Input Gestures dialog.
+	scriptCategory = _("Task Explorer")
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        settings.initialiseConfig()
-        gui.settingsDialogs.NVDASettingsDialog.categoryClasses.append(settings.ResourceManagerSettingsPanel)
+	def __init__(self, *args, **kwargs):
+		super().__init__(*args, **kwargs)
+		settings.initialiseConfig()
+		gui.settingsDialogs.NVDASettingsDialog.categoryClasses.append(settings.ResourceManagerSettingsPanel)
 
-        self.sampler = sampler.Sampler(
-            interval=settings.getSetting("refreshInterval"),
-            onError=log.debugWarning,
-        )
-        # Started now rather than when first asked for, so that the first
-        # measurement is already waiting when a shortcut is pressed. A pass
-        # costs a few milliseconds, so leaving it running is cheap.
-        self.sampler.start()
+		self.sampler = sampler.Sampler(
+			interval=settings.getSetting("refreshInterval"),
+			onError=log.debugWarning,
+		)
+		# Started now rather than when first asked for, so that the first
+		# measurement is already waiting when a shortcut is pressed. A pass
+		# costs a few milliseconds, so leaving it running is cheap.
+		self.sampler.start()
 
-    def terminate(self):
-        try:
-            existing = dialog.ResourceManagerDialog._instance
-            if existing is not None:
-                wx.CallAfter(existing.Close)
-        except Exception:
-            log.debugWarning("Task Explorer: could not close the dialog", exc_info=True)
-        try:
-            self.sampler.stop()
-        except Exception:
-            log.debugWarning("Task Explorer: could not stop the sampler", exc_info=True)
-        try:
-            gui.settingsDialogs.NVDASettingsDialog.categoryClasses.remove(settings.ResourceManagerSettingsPanel)
-        except ValueError:
-            pass
-        super().terminate()
+	def terminate(self):
+		try:
+			existing = dialog.ResourceManagerDialog._instance
+			if existing is not None:
+				wx.CallAfter(existing.Close)
+		except Exception:
+			log.debugWarning("Task Explorer: could not close the dialog", exc_info=True)
+		try:
+			self.sampler.stop()
+		except Exception:
+			log.debugWarning("Task Explorer: could not stop the sampler", exc_info=True)
+		try:
+			gui.settingsDialogs.NVDASettingsDialog.categoryClasses.remove(
+				settings.ResourceManagerSettingsPanel,
+			)
+		except ValueError:
+			pass
+		super().terminate()
 
-    def _syncSamplerInterval(self):
-        self.sampler.setInterval(settings.getSetting("refreshInterval"))
+	def _syncSamplerInterval(self):
+		self.sampler.setInterval(settings.getSetting("refreshInterval"))
 
-    def _announceTop(self, byMemory):
-        if not self.sampler.isPrimed:
-            ui.message(formatting.formatNotReadyMessage())
-            return
-        apps = self.sampler.getTopApps(
-            count=settings.getSetting("topAppCount"),
-            key="memory" if byMemory else "cpu",
-        )
-        ui.message(
-            formatting.formatSpokenSummary(
-                apps,
-                includeMemory=settings.getSetting("includeMemoryInSpokenSummary"),
-                byMemory=byMemory,
-            ),
-        )
+	def _announceTop(self, byMemory):
+		if not self.sampler.isPrimed:
+			ui.message(formatting.formatNotReadyMessage())
+			return
+		apps = self.sampler.getTopApps(
+			count=settings.getSetting("topAppCount"),
+			key="memory" if byMemory else "cpu",
+		)
+		ui.message(
+			formatting.formatSpokenSummary(
+				apps,
+				includeMemory=settings.getSetting("includeMemoryInSpokenSummary"),
+				byMemory=byMemory,
+			),
+		)
 
-    @script(
-        # Translators: The description of a command, shown in NVDA's Input Gestures dialog.
-        description=_("Shows the Task Explorer, listing applications by how much they are using"),
-        gesture="kb:NVDA+alt+e",
-    )
-    def script_showResourceManager(self, gesture):
-        self._syncSamplerInterval()
-        if not self.sampler.isPrimed:
-            ui.message(formatting.formatNotReadyMessage())
-            return
-        try:
-            dialog.ResourceManagerDialog.open(self.sampler)
-        except Exception:
-            log.error("Task Explorer: the dialog could not be shown", exc_info=True)
-            # Translators: Spoken when the dialog fails to open.
-            ui.message(_("Task Explorer could not open. See the NVDA log for details."))
+	@script(
+		# Translators: The description of a command, shown in NVDA's Input Gestures dialog.
+		description=_("Shows the Task Explorer, listing applications by how much they are using"),
+		gesture="kb:NVDA+alt+e",
+	)
+	def script_showResourceManager(self, gesture):
+		self._syncSamplerInterval()
+		if not self.sampler.isPrimed:
+			ui.message(formatting.formatNotReadyMessage())
+			return
+		try:
+			dialog.ResourceManagerDialog.open(self.sampler)
+		except Exception:
+			log.error("Task Explorer: the dialog could not be shown", exc_info=True)
+			# Translators: Spoken when the dialog fails to open.
+			ui.message(_("Task Explorer could not open. See the NVDA log for details."))
 
-    @script(
-        # Translators: The description of a command, shown in NVDA's Input Gestures dialog.
-        description=_("Announces the applications using the most processor time"),
-        speakOnDemand=True,
-    )
-    def script_announceTopByCpu(self, gesture):
-        self._syncSamplerInterval()
-        self._announceTop(byMemory=False)
+	@script(
+		# Translators: The description of a command, shown in NVDA's Input Gestures dialog.
+		description=_("Announces the applications using the most processor time"),
+		speakOnDemand=True,
+	)
+	def script_announceTopByCpu(self, gesture):
+		self._syncSamplerInterval()
+		self._announceTop(byMemory=False)
 
-    @script(
-        # Translators: The description of a command, shown in NVDA's Input Gestures dialog.
-        description=_("Announces the applications using the most memory"),
-        speakOnDemand=True,
-    )
-    def script_announceTopByMemory(self, gesture):
-        self._syncSamplerInterval()
-        self._announceTop(byMemory=True)
+	@script(
+		# Translators: The description of a command, shown in NVDA's Input Gestures dialog.
+		description=_("Announces the applications using the most memory"),
+		speakOnDemand=True,
+	)
+	def script_announceTopByMemory(self, gesture):
+		self._syncSamplerInterval()
+		self._announceTop(byMemory=True)
 
-    @script(
-        # Translators: The description of a command, shown in NVDA's Input Gestures dialog.
-        description=_("Announces total processor and memory use"),
-        speakOnDemand=True,
-    )
-    def script_announceTotalUtilisation(self, gesture):
-        self._syncSamplerInterval()
-        if not self.sampler.isPrimed:
-            ui.message(formatting.formatNotReadyMessage())
-            return
-        ui.message(formatting.formatTotals(self.sampler.getSnapshot()))
+	@script(
+		# Translators: The description of a command, shown in NVDA's Input Gestures dialog.
+		description=_("Announces total processor and memory use"),
+		speakOnDemand=True,
+	)
+	def script_announceTotalUtilisation(self, gesture):
+		self._syncSamplerInterval()
+		if not self.sampler.isPrimed:
+			ui.message(formatting.formatNotReadyMessage())
+			return
+		ui.message(formatting.formatTotals(self.sampler.getSnapshot()))
